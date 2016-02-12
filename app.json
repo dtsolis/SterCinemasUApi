@@ -1,0 +1,8 @@
+{
+  "name": "SterCinemasUApi Example",
+  "description": "A completely unofficial & dummy api to get the schedule for available movies at the www.stercinemas.gr cinema",
+  "repository": "https://github.com/dtsolis/SterCinemasUApi",
+  "keywords": ["schedule", "cinema"],
+  "success_url": "/",
+  "website": "https://github.com/dtsolis/SterCinemasUApi"
+}
