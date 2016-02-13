@@ -6,8 +6,8 @@ A completely unofficial api that retrieves - in a dummy way - the schedule for a
 
 ## About
 
-+ The `fetch.rb` file reads the home page and gets the schedule of the html.
-+ The `index.rb` starts [sinatra](http://www.sinatrarb.com/).
++ The `fetch.rb` file reads html pages and gets the schedule and coming-soon movies out of them
++ The `index.rb` file starts [Sinatra](http://www.sinatrarb.com/).
 + You can [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
 ## Disclaimer
