@@ -51,18 +51,10 @@ def parseSchedule
 		cinema.drop(1).each do |movie|
 			tmpMovie = { 
 				:id => movie[0][0], 
-				:name => movie[0][1], 
-				:poster => "http://www.stercinemas.gr/SterCinemas/SterImagesLive/Movies/#{movie[0][0]}/#{movie[0][0]}_0.jpg",
-				:images => [
-					"http://www.stercinemas.gr/SterCinemas/SterImagesLive/Movies/#{movie[0][0]}/#{movie[0][0]}_1.jpg",
-					"http://www.stercinemas.gr/SterCinemas/SterImagesLive/Movies/#{movie[0][0]}/#{movie[0][0]}_2.jpg",
-					"http://www.stercinemas.gr/SterCinemas/SterImagesLive/Movies/#{movie[0][0]}/#{movie[0][0]}_3.jpg",
-					"http://www.stercinemas.gr/SterCinemas/SterImagesLive/Movies/#{movie[0][0]}/#{movie[0][0]}_4.jpg",
-					"http://www.stercinemas.gr/SterCinemas/SterImagesLive/Movies/#{movie[0][0]}/#{movie[0][0]}_5.jpg",
-					"http://www.stercinemas.gr/SterCinemas/SterImagesLive/Movies/#{movie[0][0]}/#{movie[0][0]}_6.jpg",
-				],
+				:name => movie[0][1],
 				:screenings => [] 
 			}
+			tmpMovie.merge! imagesHashForMovieId(tmpMovie[:id])
 
 			movie[1].drop(1).each do |date|
 				tmpDate = {:date => date[0][0], :times => []}
@@ -110,16 +102,7 @@ def parseComingSoon
 				:director => director,
 				:actors => actors,
 				:short_description => info.lines[3].strip,
-				:poster => "http://www.stercinemas.gr/SterCinemas/SterImagesLive/Movies/#{movieId}/#{movieId}_0.jpg",
-				:images => [
-					"http://www.stercinemas.gr/SterCinemas/SterImagesLive/Movies/#{movieId}/#{movieId}_1.jpg",
-					"http://www.stercinemas.gr/SterCinemas/SterImagesLive/Movies/#{movieId}/#{movieId}_2.jpg",
-					"http://www.stercinemas.gr/SterCinemas/SterImagesLive/Movies/#{movieId}/#{movieId}_3.jpg",
-					"http://www.stercinemas.gr/SterCinemas/SterImagesLive/Movies/#{movieId}/#{movieId}_4.jpg",
-					"http://www.stercinemas.gr/SterCinemas/SterImagesLive/Movies/#{movieId}/#{movieId}_5.jpg",
-					"http://www.stercinemas.gr/SterCinemas/SterImagesLive/Movies/#{movieId}/#{movieId}_6.jpg",
-				]
-			}
+			}.merge(imagesHashForMovieId(movieId))
 		end
 	end
 
@@ -175,6 +158,14 @@ def parseMovie(movieId)
 		:duration => duration,
 		:official_title => officialTitle,
 		:story => story,
+		:screenings => [] 
+	}.merge(imagesHashForMovieId(movieId))
+end
+
+
+# helpers
+def imagesHashForMovieId(movieId)
+	{
 		:poster => "http://www.stercinemas.gr/SterCinemas/SterImagesLive/Movies/#{movieId}/#{movieId}_0.jpg",
 		:images => [
 			"http://www.stercinemas.gr/SterCinemas/SterImagesLive/Movies/#{movieId}/#{movieId}_1.jpg",
@@ -183,7 +174,6 @@ def parseMovie(movieId)
 			"http://www.stercinemas.gr/SterCinemas/SterImagesLive/Movies/#{movieId}/#{movieId}_4.jpg",
 			"http://www.stercinemas.gr/SterCinemas/SterImagesLive/Movies/#{movieId}/#{movieId}_5.jpg",
 			"http://www.stercinemas.gr/SterCinemas/SterImagesLive/Movies/#{movieId}/#{movieId}_6.jpg",
-		],
-		:screenings => [] 
+		]
 	}
 end
