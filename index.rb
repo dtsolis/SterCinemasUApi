@@ -6,6 +6,7 @@ get '/' do
 	   		'/schedule',
 	   		'/schedule/cinema/:cinemaId',
 	   		'/schedule/movie/:movieId',
+	   		'/soon'
 	   	]
    	}.to_json
 end
@@ -63,6 +64,11 @@ get '/schedule/movie/:movieId' do
 	else
 		movieHash.to_json
 	end
+end
+
+get '/soon' do
+	content_type :json
+	parseComingSoon.to_json
 end
 
 not_found do
