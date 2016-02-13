@@ -6,7 +6,8 @@ get '/' do
 	   		'/schedule',
 	   		'/schedule/cinema/:cinemaId',
 	   		'/schedule/movie/:movieId',
-	   		'/soon'
+	   		'/soon',
+	   		'/movie/:movieId'
 	   	]
    	}.to_json
 end
@@ -69,6 +70,17 @@ end
 get '/soon' do
 	content_type :json
 	parseComingSoon.to_json
+end
+
+
+get '/movie/:movieId' do
+	content_type :json
+	movie = parseMovie(params['movieId'])
+	if movie.nil?
+		{ :status => 404, :message => "Didn't find the movie you requested" }.to_json
+	else
+		movie.to_json
+	end
 end
 
 not_found do
