@@ -2,6 +2,8 @@ require 'net/http'
 require 'yajl'
 require 'json'
 
+require 'nokogiri'
+
 def parseSchedule
 	url = URI.parse('http://www.stercinemas.gr/templates/home.aspx')
 	req = Net::HTTP::Get.new(url.to_s)
@@ -76,4 +78,50 @@ def parseSchedule
 		newHash << tmpCinema
 	end
 	newHash
+end
+
+
+def parseComingSoon
+	movies = []
+
+	url = URI.parse('http://www.stercinemas.gr/templates/TLC_ComingSoon.aspx')
+	req = Net::HTTP::Get.new(url.to_s)
+	res = Net::HTTP.start(url.host, url.port) {|http| http.request(req) }
+	html = res.body
+
+	page = Nokogiri::HTML(html)
+	if page.css('table').length > 9
+		comingSoonTable = page.css('table')[9]
+		comingSoonTable.css('tr').drop(1).each do |movie|
+			href = movie.css('td')[1].css('a')[0]['href']
+			movieId = href.gsub "TLC_MovieDetail.aspx?REFTYPE=2&SHOWMOVID=", ""
+
+			name = movie.css('td')[1].css('a')[0].text
+			info = movie.css('td')[1].css('span').text.strip
+			director = info.lines[1].gsub "Σκηνοθεσία:", ""
+			director.strip!
+
+			actors = info.lines[2].gsub "Παίζουν:", ""
+			actors.strip!
+
+			movies << {
+				:id => movieId,
+				:name => name,
+				:director => director,
+				:actors => actors,
+				:short_description => info.lines[3].strip,
+				:poster => "http://www.stercinemas.gr/SterCinemas/SterImagesLive/Movies/#{movieId}/#{movieId}_0.jpg",
+				:images => [
+					"http://www.stercinemas.gr/SterCinemas/SterImagesLive/Movies/#{movieId}/#{movieId}_1.jpg",
+					"http://www.stercinemas.gr/SterCinemas/SterImagesLive/Movies/#{movieId}/#{movieId}_2.jpg",
+					"http://www.stercinemas.gr/SterCinemas/SterImagesLive/Movies/#{movieId}/#{movieId}_3.jpg",
+					"http://www.stercinemas.gr/SterCinemas/SterImagesLive/Movies/#{movieId}/#{movieId}_4.jpg",
+					"http://www.stercinemas.gr/SterCinemas/SterImagesLive/Movies/#{movieId}/#{movieId}_5.jpg",
+					"http://www.stercinemas.gr/SterCinemas/SterImagesLive/Movies/#{movieId}/#{movieId}_6.jpg",
+				]
+			}
+		end
+	end
+
+	movies
 end
