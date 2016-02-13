@@ -125,3 +125,65 @@ def parseComingSoon
 
 	movies
 end
+
+
+def parseMovie(movieId)
+	url = URI.parse('http://www.stercinemas.gr/templates/TLC_MovieDetail.aspx?REFTYPE=2&SHOWMOVID='<<movieId.to_s)
+	req = Net::HTTP::Get.new(url.to_s)
+	res = Net::HTTP.start(url.host, url.port) { |http| http.request(req) }
+	html = res.body
+
+	page = Nokogiri::HTML(html)
+
+	# See if the movie is not found...
+	page.css('td').each do |column|
+		if column.text.include? "NO MOVIES FOUND"
+			return nil
+		end
+	end
+
+	# Okay, so, no "NO MOVIES FOUND" text, the movie is probably here...
+	movie = page.css('table')[11]
+	name = movie.css('tr')[0].css('td').text
+	name.gsub! "\u00A0", " " # replace &nbsp; with space
+	name.strip!
+	details = movie.css('tr')[1].css('td')[0].css('p')[1].text.strip
+	story = movie.css('tr')[1].css('td')[0].css('p')[2].text
+
+	# Sample 'details'
+	# Σκηνοθεσία: Τιμ Μίλερ     Πρωταγωνιστούν: Ράιαν Ρέινολντς, Μορένα Μπακάριν, Εντ Σκριν, Τζίνα Καράνο, Τ.Τζ. Μίλερ, Μπριάνα Χίλντεμπραντ     Κατηγορία: Περιπέτεια Φαντασίας     Διάρκεια: 106'     Επίσημος Τίτλος: DEADPOOL     Βαθμολογία:
+	detailValues = details.split(':')
+
+	director = detailValues[1].gsub("Πρωταγωνιστούν", "").strip
+	actors = detailValues[2].gsub("Κατηγορία", "").strip
+	category = detailValues[3].gsub("Διάρκεια", "").strip
+	duration = detailValues[4].gsub("Επίσημος Τίτλος", "").gsub("'", "").strip
+	officialTitle = detailValues[5].gsub("Βαθμολογία", "").strip
+
+	# Sample 'story'
+	# Υπόθεση: Βασισμένο στον πιο αντισ...
+	story = story[8..-1].strip
+
+	# TODO: maybe look for screenings?!...
+
+	movie = {
+		:id => movieId,
+		:name => name,
+		:director => director,
+		:actors => actors,
+		:category => category,
+		:duration => duration,
+		:official_title => officialTitle,
+		:story => story,
+		:poster => "http://www.stercinemas.gr/SterCinemas/SterImagesLive/Movies/#{movieId}/#{movieId}_0.jpg",
+		:images => [
+			"http://www.stercinemas.gr/SterCinemas/SterImagesLive/Movies/#{movieId}/#{movieId}_1.jpg",
+			"http://www.stercinemas.gr/SterCinemas/SterImagesLive/Movies/#{movieId}/#{movieId}_2.jpg",
+			"http://www.stercinemas.gr/SterCinemas/SterImagesLive/Movies/#{movieId}/#{movieId}_3.jpg",
+			"http://www.stercinemas.gr/SterCinemas/SterImagesLive/Movies/#{movieId}/#{movieId}_4.jpg",
+			"http://www.stercinemas.gr/SterCinemas/SterImagesLive/Movies/#{movieId}/#{movieId}_5.jpg",
+			"http://www.stercinemas.gr/SterCinemas/SterImagesLive/Movies/#{movieId}/#{movieId}_6.jpg",
+		],
+		:screenings => [] 
+	}
+end
