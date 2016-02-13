@@ -5,7 +5,7 @@ require 'json'
 require 'nokogiri'
 
 def parseSchedule
-	url = URI.parse('http://www.stercinemas.gr/templates/home.aspx')
+	url = URI.parse('http://www.stercinemas.gr/templates/TLC_Showings.aspx')
 	req = Net::HTTP::Get.new(url.to_s)
 	res = Net::HTTP.start(url.host, url.port) {|http|
 	  http.request(req)
@@ -44,8 +44,9 @@ def parseSchedule
 
 	# 4. 
 	newHash = []
+	cinemaIds = []
 
-	hash.each do |cinema|
+	hash.each_with_index do |cinema, cinemaIndex|
 		tmpCinema = { :id => cinema[0][0], :name => cinema[0][1], :movies => [] }
 
 		cinema.drop(1).each do |movie|
@@ -68,7 +69,34 @@ def parseSchedule
 		end
 
 		newHash << tmpCinema
+		cinemaIds << {
+			:id => tmpCinema[:id],
+			:index => cinemaIndex
+		}
 	end
+
+	#
+	# Extract cinemas' thumbnails
+	# 
+	
+	page = Nokogiri::HTML(html)
+	cinemasTable = page.css('table')[11]
+	cinemasTable.css('tr').each do |row|
+		row.css('td').each do |column|
+			currentId = column.css('a').first['href'].gsub "TLC_Showings.aspx?LMID=", ""
+
+			c = cinemaIds.select { |item| item[:id] == currentId.to_s }.first
+			if c != nil
+				column.css('img').each do |tmpImg|
+					if tmpImg['src'].start_with? "/SterCinemas/SterImagesLive/Cinemas"
+						index = c[:index]
+						newHash[index][:photo] = "http://www.stercinemas.gr/"<<tmpImg['src']
+					end
+				end
+			end
+		end
+	end
+
 	newHash
 end
 
