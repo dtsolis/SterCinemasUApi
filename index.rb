@@ -11,7 +11,8 @@ get '/' do
 	   		'/schedule/cinema/:cinemaId',
 	   		'/schedule/movie/:movieId',
 	   		'/soon',
-	   		'/movie/:movieId'
+	   		'/movie/:movieId',
+	   		'/cinemas'
 	   	]
    	}.to_json
 end
@@ -84,6 +85,14 @@ get '/movie/:movieId' do
 		{ :status => 404, :message => "Didn't find the movie you requested" }.to_json
 	else
 		movie.to_json
+	end
+end
+
+get '/cinemas' do
+	begin
+		File.read("cinemas.json")
+	rescue Exception => e
+		{ :error => e }.to_json
 	end
 end
 
