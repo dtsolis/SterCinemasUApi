@@ -1,7 +1,7 @@
 [
 	{
 		"id": "1",
-		"name": "Ster Ilion",
+		"title": "Ster Ilion",
 		"address": "Λεωφόρος Δημοκρατίας 67A - Ίλιον",
     	"lat": 38.040780,
     	"lon": 23.725650
@@ -15,14 +15,14 @@
 	},
 	{
 		"id": "3",
-		"name": "Ster Μακεδονία",
+		"title": "Ster Μακεδονία",
 		"address": "Τομπάζη 15, Πυλαία - Μακεδονία",
     	"lat": 40.60786,
     	"lon": 22.95959
 	},
 	{
 		"id": "6",
-		"name": "Ster Veso Mare",
+		"title": "Ster Veso Mare",
 		"address": "Ακτή Δυμαίων, Πάτρα",
     	"lat": 38.237642,
     	"lon": 21.725919
