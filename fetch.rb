@@ -76,6 +76,31 @@ def parseSchedule
 	end
 
 	#
+	# Add cinemas with no schedule but are presented in cinemas.json
+	# 
+	
+	begin
+		cFile = File.read("cinemas.json")
+		cHash = JSON.parse(cFile)
+		cHash.each do |c|
+			existedCinema = newHash.select { |item| item[:id] == c["id"] }.first
+			if existedCinema.nil?
+				newHash << {
+					:id => c["id"],
+					:name => c["title"],
+					:movies => []
+				}
+				cinemaIds << {
+					:id => c["id"],
+					:index => newHash.size-1
+				}
+			end
+		end
+	rescue Exception => e
+		{ :error => e }.to_json
+	end
+
+	#
 	# Extract cinemas' thumbnails
 	# 
 	
@@ -95,27 +120,6 @@ def parseSchedule
 				end
 			end
 		end
-	end
-
-	#
-	# Add cinemas with no schedule but are presented in cinemas.json
-	# 
-	
-	begin
-		cFile = File.read("cinemas.json")
-		cHash = JSON.parse(cFile)
-		cHash.each do |c|
-			existedCinema = newHash.select { |item| item[:id] == c["id"] }.first
-			if existedCinema.nil?
-				newHash << {
-					:id => c["id"],
-					:name => c["title"],
-					:movies => []
-				}
-			end
-		end
-	rescue Exception => e
-		{ :error => e }.to_json
 	end
 
 	newHash
