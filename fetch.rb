@@ -21,8 +21,8 @@ def parseSchedule
 	# ------
 
 	# 1.
-	startString = "var AllDataArray = new Array([4]);"
-	startIndex = html.index(startString)
+	startString = "var AllDataArray = new Array(["
+	startIndex = html.index(startString)+4
 	endIndex = html.index("function getMovies() {")
 
 	javascriptArray = html[startIndex+startString.length..endIndex-1].strip
