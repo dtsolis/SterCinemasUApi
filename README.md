@@ -1,5 +1,7 @@
 # SterCinemasUApi
 
+**NOTE:** This project is **archived** due to Ster Cinemas being merged with another cinema and old website is down.
+
 ## Description
 
 A completely unofficial api that retrieves - in a dummy way - the schedule for available movies at the www.stercinemas.gr cinema.
